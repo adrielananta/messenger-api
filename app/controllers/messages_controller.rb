@@ -1,7 +1,31 @@
 class MessagesController < ApplicationController
 
     def index
-        render json: "hi"
+        @convo_id = params[:conversation_id]
+        @conversation = Conversation.find_by(id: @convo_id)
+        @conversation_member = ConversationUser.find_by(conversation_id: @convo_id, user_id: current_user.id)
+        if @conversation.nil?
+            render status: 404
+        elsif @conversation_member.nil?
+            render status: 403
+        else
+            @data = []
+            Msg.where(conversation_id: @convo_id).each do |msg|
+                @temp_user = User.find(msg.user_id)
+                @temp_msg = {
+                    id: msg.id,
+                    message: msg.message,
+                    sender: {
+                        id: @temp_user.id,
+                        name: @temp_user.name
+                    },
+                    sent_at: msg.created_at
+                }
+                @data.push(@temp_msg)
+            end
+            json_response(@data, 200)
+        end
+        
     end
 
     def create
