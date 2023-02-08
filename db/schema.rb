@@ -10,10 +10,39 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_01_30_224323) do
+ActiveRecord::Schema.define(version: 2023_02_07_182401) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "conversation_users", force: :cascade do |t|
+    t.bigint "conversation_id", null: false
+    t.bigint "user_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["conversation_id"], name: "index_conversation_users_on_conversation_id"
+    t.index ["user_id"], name: "index_conversation_users_on_user_id"
+  end
+
+  create_table "conversations", force: :cascade do |t|
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "conversations_users", id: false, force: :cascade do |t|
+    t.bigint "conversation_id", null: false
+    t.bigint "user_id", null: false
+  end
+
+  create_table "msgs", force: :cascade do |t|
+    t.string "message"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.bigint "user_id", null: false
+    t.bigint "conversation_id", null: false
+    t.index ["conversation_id"], name: "index_msgs_on_conversation_id"
+    t.index ["user_id"], name: "index_msgs_on_user_id"
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "name"
@@ -24,4 +53,8 @@ ActiveRecord::Schema.define(version: 2023_01_30_224323) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  add_foreign_key "conversation_users", "conversations"
+  add_foreign_key "conversation_users", "users"
+  add_foreign_key "msgs", "conversations"
+  add_foreign_key "msgs", "users"
 end
