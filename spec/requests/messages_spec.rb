@@ -34,6 +34,9 @@ RSpec.describe 'Messages API', type: :request do
 
     context 'when user try to access conversation not belong to him' do
       # TODO: create conversation and set convo_id variable
+      let(:room) {create(:conversation)}
+      let(:convo_id) {room.id}
+      
       before { get "/conversations/#{convo_id}/messages", params: {}, headers: samid_headers }
 
       it 'returns error 403' do
