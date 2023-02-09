@@ -35,4 +35,27 @@ class ConversationsController < ApplicationController
         end
         json_response(@data, 200)
     end
+
+    def show
+        @convo_id = params[:conversation_id]
+        @conversation = Conversation.find_by(id: @convo_id)
+        @conversation_member = ConversationUser.find_by(conversation_id: @convo_id, user_id: current_user.id)
+        if @conversation.nil?
+            render status: 404
+        elsif @conversation_member.nil?
+            render status: 403
+        else
+            @recipient_convo = ConversationUser.select([:first]).where(conversation_id: @convo_id).where.not(user_id: current_user.id)
+            @recipient = User.find_by(id: @recipient_convo.user_id)
+            @data = {
+                id: @conversation.id,
+                with_user: {
+                    id: @recipient.id,
+                    name: @recipient.name,
+                    photo_url: @recipient.photo_url
+                }
+            }
+            json_response(@data, 200)
+        end
+    end
 end
