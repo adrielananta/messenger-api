@@ -5,4 +5,7 @@ FactoryBot.define do
     password 'foobar'
     photo_url 'https://picsum.photos/200'
   end
+
+  factory :conversation do
+  end
 end
