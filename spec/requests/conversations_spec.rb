@@ -2,10 +2,10 @@ require 'rails_helper'
 
 RSpec.describe 'Conversations API', type: :request do
   let(:dimas) { create(:user) }
-  let(:dimas_headers) { valid_headers(dimas) }
+  let(:dimas_headers) { valid_headers(dimas.id) }
 
   let(:samid) { create(:user) }
-  let(:samid_headers) { valid_headers(samid) }
+  let(:samid_headers) { valid_headers(samid.id) }
 
   describe 'GET /conversations' do
     context 'when user have no conversation' do
