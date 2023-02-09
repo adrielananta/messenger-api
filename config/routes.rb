@@ -3,6 +3,6 @@ Rails.application.routes.draw do
   post "messages", to: "messages#create"
   resources :conversations do
     resources :messages, only: [:index]
-  get "conversations", to: "conversations#index"
+  resources :conversations, only: [:index, :show]
   end
 end
