@@ -23,16 +23,14 @@ class MessagesController < ApplicationController
                 }
                 @data.push(@temp_msg)
             end
+            @conversation_member.unread = 0
+            @conversation_member.save()
             json_response(@data, 200)
         end
         
     end
 
     def create
-        #@conversation = Conversation.new(params.require(:user_ids).permit(user_ids: [current_user.id, user_id]))
-        #@conversation.save
-        #render json: ConversationUser.all
-        #@result = JSON.parse(request.params)
         @text = params[:message]
         @user_id = params[:user_id]
         @status = 201
@@ -48,10 +46,12 @@ class MessagesController < ApplicationController
 
             @sender_convo.conversation_id = @conversation.id
             @sender_convo.user_id = current_user.id
+            @sender_convo.unread = 0
             @sender_convo.save()
 
             @recipient_convo.conversation_id = @conversation_id
             @recipient_convo.user_id = @user_id
+            @recipient_convo.unread = 0
             @recipient_convo.save()
         else
             @conversation = @conversation[0]
@@ -70,6 +70,9 @@ class MessagesController < ApplicationController
             @message.user_id = current_user.id
             @message.message = @text
             @message.save()
+
+            @recipient_convo.unread += 1
+            @recipient_convo.save()
 
             @data = {
                 id: @message.id,
